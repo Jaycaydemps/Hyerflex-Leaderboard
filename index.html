@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HyerFlex · Employee Tier Gamification</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0f0f;
+  --ink2:#3a3a3a;
+  --ink3:#767676;
+  --paper:#fafaf7;
+  --paper2:#f2f1ec;
+  --paper3:#e8e6df;
+  --coral:#d85a30;
+  --coral-light:#faece7;
+  --purple:#534ab7;
+  --purple-light:#eeedfe;
+  --teal:#0f6e56;
+  --teal-light:#e1f5ee;
+  --amber:#854f0b;
+  --amber-light:#faeeda;
+  --border:#dddbd4;
+  --r:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6}
+
+/* ── HERO ── */
+.hero{background:var(--ink);color:var(--paper);padding:72px 48px 56px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-80px;width:520px;height:520px;border-radius:50%;border:1px solid rgba(255,255,255,.06)}
+.hero::after{content:'';position:absolute;bottom:-160px;right:60px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(255,255,255,.04)}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:20px}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,6vw,64px);line-height:1.08;font-weight:400;margin-bottom:20px;max-width:680px}
+.hero h1 em{font-style:italic;color:rgba(255,255,255,.55)}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.55);max-width:520px;line-height:1.7;margin-bottom:36px}
+.hero-pills{display:flex;gap:10px;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;letter-spacing:.02em}
+.pill-coral{background:var(--coral);color:#fff}
+.pill-purple{background:var(--purple);color:#fff}
+.pill-teal{background:var(--teal);color:#fff}
+
+/* ── LAYOUT ── */
+.container{max-width:960px;margin:0 auto;padding:0 32px}
+.section{padding:64px 0}
+.section+.section{border-top:1px solid var(--border)}
+
+/* ── SECTION HEADERS ── */
+.sec-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.sec-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,36px);font-weight:400;line-height:1.15;margin-bottom:16px}
+.sec-body{font-size:14px;color:var(--ink2);line-height:1.75;max-width:600px}
+
+/* ── BEHAVIOR CARDS ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:36px}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:24px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.07)}
+.card-accent{position:absolute;top:0;left:0;width:100%;height:3px}
+.card-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;font-weight:500}
+.card h3{font-size:16px;font-weight:500;margin-bottom:8px}
+.card p{font-size:13px;color:var(--ink2);line-height:1.65}
+.card .pts{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-top:16px}
+.card .pts span{font-size:11px;font-weight:400;color:var(--ink3);margin-left:4px}
+
+/* ── POINT BREAKDOWN ── */
+.breakdown{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:32px;margin-top:36px}
+.breakdown-title{font-size:14px;font-weight:500;margin-bottom:20px;color:var(--ink2)}
+.breakdown-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.breakdown-row:last-child{border-bottom:none}
+.breakdown-scenario{flex:1;font-size:13px;font-weight:500}
+.breakdown-detail{font-size:12px;color:var(--ink3);margin-top:2px}
+.breakdown-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:3px 10px;border-radius:12px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500}
+.chip-coral{background:var(--coral-light);color:var(--coral)}
+.chip-purple{background:var(--purple-light);color:var(--purple)}
+.chip-amber{background:var(--amber-light);color:var(--amber)}
+.breakdown-total{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;min-width:52px;text-align:right}
+
+/* ── LEADERBOARD ── */
+.lb-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.tab-row{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--ink2);background:transparent;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tab:hover{border-color:var(--ink3)}
+.tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.store-sel{font-size:12px;padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--ink);cursor:pointer;font-family:'DM Sans',sans-serif}
+.lb-table-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:10px 14px;font-weight:500;font-size:10px;color:var(--ink3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.08em;background:var(--paper2)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--paper)}
+tbody td{padding:11px 14px}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;background:var(--paper2);color:var(--ink2)}
+.rank-1 .rank-badge{background:#b07515;color:#fff}
+.rank-2 .rank-badge{background:#767676;color:#fff}
+.rank-3 .rank-badge{background:#854f0b;color:#fff}
+.emp-name{font-weight:500;font-size:13px}
+.store-tag{font-size:11px;color:var(--ink3);margin-top:1px;font-family:'DM Mono',monospace}
+.bar-wrap{display:flex;align-items:center;gap:8px}
+.bar-bg{flex:1;height:5px;border-radius:3px;background:var(--paper3);overflow:hidden;min-width:50px}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink2);min-width:24px;text-align:right}
+.pts-total{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;text-align:right}
+.lb-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3)}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.empty-row td{text-align:center;color:var(--ink3);padding:32px;font-size:13px}
+
+/* ── GUARDRAILS ── */
+.guardrails{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:28px}
+.gr{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.gr-icon{width:28px;height:28px;border-radius:6px;margin-bottom:10px;display:flex;align-items:center;justify-content:center}
+.gr h4{font-size:13px;font-weight:500;margin-bottom:4px}
+.gr p{font-size:12px;color:var(--ink2);line-height:1.6}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);color:rgba(255,255,255,.3);text-align:center;padding:32px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.06em}
+footer strong{color:rgba(255,255,255,.7)}
+
+@media(max-width:600px){
+  .hero{padding:48px 24px 40px}
+  .container{padding:0 20px}
+  .section{padding:48px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">HyerFlex · Gamification Framework</div>
+    <h1>Employee tier<br><em>scoring design</em></h1>
+    <p class="hero-sub">A behavior-first leaderboard system built to encourage cross-location work, upskilling, and shift pickups across the workforce — with monthly resets to keep competition fresh.</p>
+    <div class="hero-pills">
+      <span class="pill pill-coral">47 active employees</span>
+      <span class="pill pill-purple">16 skill types</span>
+      <span class="pill pill-teal">25 store locations</span>
+    </div>
+  </div>
+</div>
+
+<!-- BEHAVIORS -->
+<div class="section">
+  <div class="container">
+    <div class="sec-label">Section 01</div>
+    <h2 class="sec-title">The three behaviors<br>we're rewarding</h2>
+    <p class="sec-body">Every point an employee earns traces back to one of three target behaviors. The model is additive — doing more of any behavior always helps your rank.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-accent" style="background:var(--coral)"></div>
+        <div class="card-tag" style="color:var(--coral)">Behavior 01</div>
+        <h3>Shift pickups</h3>
+        <p>The highest-frequency behavior. Every completed shift earns base points regardless of location.</p>
+        <div class="pts" style="color:var(--coral)">10 <span>pts per shift</span></div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:var(--teal)"></div>
+        <div class="card-tag" style="color:var(--teal)">Behavior 02</div>
+        <h3>Cross-location work</h3>
+        <p>Working outside your home store earns the standard shift points plus a location bonus — no separate mechanic needed.</p>
+        <div class="pts" style="color:var(--teal)">10+8 <span>pts per cross-loc shift</span></div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:var(--purple)"></div>
+        <div class="card-tag" style="color:var(--purple)">Behavior 03</div>
+        <h3>Skill activation</h3>
+        <p>The first time each approved skill is used in a month earns a bonus. Resets every month — rewarding breadth consistently over time.</p>
+        <div class="pts" style="color:var(--purple)">+15 <span>pts per skill, first use each month</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POINT LOGIC -->
+<div class="section">
+  <div class="container">
+    <div class="sec-label">Section 02</div>
+    <h2 class="sec-title">How points<br>stack in practice</h2>
+    <p class="sec-body">Points from all three behaviors combine into a single monthly score. The worked examples below show how different employee profiles score differently — and why.</p>
+    <div class="breakdown">
+      <div class="breakdown-title">Worked examples — March 2026</div>
+      <div class="breakdown-row">
+        <div>
+          <div class="breakdown-scenario">Home shift, known skill</div>
+          <div class="breakdown-detail">e.g. Front End Cashier at home store, second time this month</div>
+        </div>
+        <div class="breakdown-chips">
+          <span class="chip chip-coral">10 shift</span>
+        </div>
+        <div class="breakdown-total">10 pts</div>
+      </div>
+      <div class="breakdown-row">
+        <div>
+          <div class="breakdown-scenario">Home shift, first activation</div>
+          <div class="breakdown-detail">e.g. Deli Counter at home store, first time this month</div>
+        </div>
+        <div class="breakdown-chips">
+          <span class="chip chip-coral">10 shift</span>
+          <span class="chip chip-purple">+15 activation</span>
+        </div>
+        <div class="breakdown-total">25 pts</div>
+      </div>
+      <div class="breakdown-row">
+        <div>
+          <div class="breakdown-scenario">Cross-location shift, known skill</div>
+          <div class="breakdown-detail">e.g. Front End Cashier at different store, skill already activated</div>
+        </div>
+        <div class="breakdown-chips">
+          <span class="chip chip-coral">10 shift</span>
+          <span class="chip chip-amber">+8 cross-loc</span>
+        </div>
+        <div class="breakdown-total">18 pts</div>
+      </div>
+      <div class="breakdown-row">
+        <div>
+          <div class="breakdown-scenario">Cross-location shift, first activation</div>
+          <div class="breakdown-detail">e.g. Bakery Tray-Up at a different store, first time this month</div>
+        </div>
+        <div class="breakdown-chips">
+          <span class="chip chip-coral">10 shift</span>
+          <span class="chip chip-amber">+8 cross-loc</span>
+          <span class="chip chip-purple">+15 activation</span>
+        </div>
+        <div class="breakdown-total">33 pts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="section">
+  <div class="container">
+    <div class="sec-label">Section 03</div>
+    <h2 class="sec-title">March 2026<br>leaderboard</h2>
+    <p class="sec-body">Live scoring from real HyerFlex shift data. Four board views — switch between them to see how the same employees rank differently depending on which behavior you're measuring.</p>
+
+    <div style="margin-top:32px">
+      <div class="lb-controls">
+        <div class="tab-row">
+          <button class="tab active" onclick="setTab('overall',this)">Overall rank</button>
+          <button class="tab" onclick="setTab('shifts',this)">Shift board</button>
+          <button class="tab" onclick="setTab('travel',this)">Travel board</button>
+          <button class="tab" onclick="setTab('skills',this)">Skills board</button>
+        </div>
+        <select class="store-sel" id="storeFilter" onchange="render()">
+          <option value="all">All stores (global)</option>
+        </select>
+      </div>
+      <div class="lb-table-wrap">
+        <table>
+          <thead id="lb-head"></thead>
+          <tbody id="lb-body"></tbody>
+        </table>
+      </div>
+      <div class="lb-legend">
+        <div class="leg"><div class="leg-dot" style="background:var(--coral)"></div>Shift pts (incl. cross-loc bonus)</div>
+        <div class="leg"><div class="leg-dot" style="background:var(--purple)"></div>Skill activation pts</div>
+        <div class="leg"><div class="leg-dot" style="background:var(--teal)"></div>Cross-location shifts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GUARDRAILS -->
+<div class="section">
+  <div class="container">
+    <div class="sec-label">Section 04</div>
+    <h2 class="sec-title">Anti-gaming<br>guardrails</h2>
+    <p class="sec-body">The model is designed so that points can only be earned through genuine completed work — not applications, not repeats.</p>
+    <div class="guardrails">
+      <div class="gr">
+        <div class="gr-icon" style="background:var(--coral-light)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#d85a30" stroke-width="1.5"/><path d="M7 4v4M7 10v.5" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h4>Completion required</h4>
+        <p>Shift points only award on completed shifts. No-shows remove points from the monthly total.</p>
+      </div>
+      <div class="gr">
+        <div class="gr-icon" style="background:var(--purple-light)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="#534ab7" stroke-width="1.5"/><path d="M4 7l2.5 2.5L10 4.5" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>One activation per skill</h4>
+        <p>Skill bonus awards once per skill per month. Repeating the same skill after activation earns standard shift points only.</p>
+      </div>
+      <div class="gr">
+        <div class="gr-icon" style="background:var(--teal-light)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>Cross-loc needs completion</h4>
+        <p>The location bonus applies only to fully completed cross-location shifts, not applications or partial shifts.</p>
+      </div>
+      <div class="gr">
+        <div class="gr-icon" style="background:var(--amber-light)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#854f0b" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h4>Monthly reset</h4>
+        <p>All scores and skill activations reset on the 1st. Previous month archives remain visible; all-time totals tracked separately.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <strong>HyerFlex</strong> &nbsp;·&nbsp; Employee Tier Gamification Framework &nbsp;·&nbsp; March 2026
+  </div>
+</footer>
+
+<script>
+const ALL=[{"employee":"Employee 14","store":"6324 - Levittown PA","store_short":"Levittown PA","total_shifts":9,"cross_loc_shifts":6,"skill_activations":1,"shift_pts":138,"skill_pts":15,"total_pts":153,"overall_rank":1,"shift_rank":1,"travel_rank":1,"skills_rank":5},{"employee":"Employee 6","store":"6062 - Yardley PA","store_short":"Yardley PA","total_shifts":8,"cross_loc_shifts":4,"skill_activations":1,"shift_pts":112,"skill_pts":15,"total_pts":127,"overall_rank":2,"shift_rank":2,"travel_rank":2,"skills_rank":5},{"employee":"Employee 101","store":"6006 - Harrisburg","store_short":"Harrisburg","total_shifts":3,"cross_loc_shifts":1,"skill_activations":3,"shift_pts":38,"skill_pts":45,"total_pts":83,"overall_rank":3,"shift_rank":6,"travel_rank":4,"skills_rank":1},{"employee":"Employee 21","store":"6324 - Levittown PA","store_short":"Levittown PA","total_shifts":5,"cross_loc_shifts":0,"skill_activations":2,"shift_pts":50,"skill_pts":30,"total_pts":80,"overall_rank":4,"shift_rank":3,"travel_rank":7,"skills_rank":2},{"employee":"Employee 65","store":"6103 - Morrisville PA","store_short":"Morrisville PA","total_shifts":4,"cross_loc_shifts":2,"skill_activations":1,"shift_pts":56,"skill_pts":15,"total_pts":71,"overall_rank":5,"shift_rank":4,"travel_rank":3,"skills_rank":5},{"employee":"Employee 63","store":"6285 - Waynesboro VA","store_short":"Waynesboro VA","total_shifts":4,"cross_loc_shifts":0,"skill_activations":2,"shift_pts":40,"skill_pts":30,"total_pts":70,"overall_rank":6,"shift_rank":4,"travel_rank":7,"skills_rank":2},{"employee":"Employee 88","store":"6285 - Waynesboro VA","store_short":"Waynesboro VA","total_shifts":2,"cross_loc_shifts":0,"skill_activations":2,"shift_pts":20,"skill_pts":30,"total_pts":50,"overall_rank":7,"shift_rank":9,"travel_rank":7,"skills_rank":2},{"employee":"Employee 50","store":"6062 - Yardley PA","store_short":"Yardley PA","total_shifts":2,"cross_loc_shifts":1,"skill_activations":1,"shift_pts":28,"skill_pts":15,"total_pts":43,"overall_rank":8,"shift_rank":9,"travel_rank":4,"skills_rank":5},{"employee":"Employee 62","store":"6285 - Waynesboro VA","store_short":"Waynesboro VA","total_shifts":2,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":20,"skill_pts":15,"total_pts":35,"overall_rank":9,"shift_rank":9,"travel_rank":7,"skills_rank":5},{"employee":"Employee 79","store":"6577 - Jenkintown PA","store_short":"Jenkintown PA","total_shifts":2,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":20,"skill_pts":15,"total_pts":35,"overall_rank":10,"shift_rank":9,"travel_rank":7,"skills_rank":5},{"employee":"Employee 41","store":"6103 - Morrisville PA","store_short":"Morrisville PA","total_shifts":2,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":20,"skill_pts":15,"total_pts":35,"overall_rank":11,"shift_rank":9,"travel_rank":7,"skills_rank":5},{"employee":"Employee 26","store":"6095 - Southampton PA","store_short":"Southampton PA","total_shifts":2,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":20,"skill_pts":15,"total_pts":35,"overall_rank":12,"shift_rank":9,"travel_rank":7,"skills_rank":5},{"employee":"Employee 9","store":"6062 - Yardley PA","store_short":"Yardley PA","total_shifts":2,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":20,"skill_pts":15,"total_pts":35,"overall_rank":13,"shift_rank":9,"travel_rank":7,"skills_rank":5},{"employee":"Employee 57","store":"6103 - Morrisville PA","store_short":"Morrisville PA","total_shifts":1,"cross_loc_shifts":1,"skill_activations":1,"shift_pts":18,"skill_pts":15,"total_pts":33,"overall_rank":14,"shift_rank":18,"travel_rank":4,"skills_rank":5},{"employee":"Employee 102","store":"6100 - Newport","store_short":"Newport","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":15,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 30","store":"6279 - Hummelstown","store_short":"Hummelstown","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":16,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 3","store":"6103 - Morrisville PA","store_short":"Morrisville PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":17,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 28","store":"6324 - Levittown PA","store_short":"Levittown PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":18,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 27","store":"6518 - Roslyn PA","store_short":"Roslyn PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":19,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 25","store":"6424 - Harrisonburg VA","store_short":"Harrisonburg VA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":20,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 24","store":"6285 - Waynesboro VA","store_short":"Waynesboro VA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":21,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 23","store":"6062 - Yardley PA","store_short":"Yardley PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":22,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 22","store":"6095 - Southampton PA","store_short":"Southampton PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":23,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 20","store":"6577 - Jenkintown PA","store_short":"Jenkintown PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":24,"shift_rank":18,"travel_rank":7,"skills_rank":5},{"employee":"Employee 19","store":"6095 - Southampton PA","store_short":"Southampton PA","total_shifts":1,"cross_loc_shifts":0,"skill_activations":1,"shift_pts":10,"skill_pts":15,"total_pts":25,"overall_rank":25,"shift_rank":18,"travel_rank":7,"skills_rank":5}];
+
+let currentTab='overall';
+const stores=[...new Set(ALL.map(d=>d.store))].sort();
+const sel=document.getElementById('storeFilter');
+stores.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
+
+function setTab(t,el){
+  currentTab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function render(){
+  const store=document.getElementById('storeFilter').value;
+  let data=store==='all'?[...ALL]:ALL.filter(d=>d.store===store);
+  if(store!=='all'){
+    [...data].sort((a,b)=>b.total_pts-a.total_pts).forEach((d,i)=>d._or=i+1);
+    [...data].sort((a,b)=>b.total_shifts-a.total_shifts).forEach((d,i)=>d._sr=i+1);
+    [...data].sort((a,b)=>b.cross_loc_shifts-a.cross_loc_shifts).forEach((d,i)=>d._tr=i+1);
+    [...data].sort((a,b)=>b.skill_activations-a.skill_activations).forEach((d,i)=>d._skr=i+1);
+  }
+  const getRank=(d,store)=>({
+    overall:store==='all'?d.overall_rank:d._or,
+    shifts:store==='all'?d.shift_rank:d._sr,
+    travel:store==='all'?d.travel_rank:d._tr,
+    skills:store==='all'?d.skills_rank:d._skr
+  });
+
+  const maxPts=Math.max(...data.map(d=>d.total_pts),1);
+  const maxShifts=Math.max(...data.map(d=>d.total_shifts),1);
+  const maxCross=Math.max(...data.map(d=>d.cross_loc_shifts),1);
+  const maxSkills=Math.max(...data.map(d=>d.skill_activations),1);
+
+  const heads={
+    overall:['#','Employee','Store','Shift pts','Skill pts','Total'],
+    shifts:['#','Employee','Store','Shifts','Cross-loc','Shift pts'],
+    travel:['#','Employee','Store','Cross-loc shifts','Total shifts','Bonus pts'],
+    skills:['#','Employee','Store','Skills activated','Skill pts','Total']
+  };
+
+  const sorts={
+    overall:(a,b)=>b.total_pts-a.total_pts,
+    shifts:(a,b)=>b.total_shifts-a.total_shifts||b.total_pts-a.total_pts,
+    travel:(a,b)=>b.cross_loc_shifts-a.cross_loc_shifts||b.total_pts-a.total_pts,
+    skills:(a,b)=>b.skill_activations-a.skill_activations||b.total_pts-a.total_pts
+  };
+
+  const sorted=[...data].sort(sorts[currentTab]);
+  document.getElementById('lb-head').innerHTML='<tr>'+heads[currentTab].map(h=>`<th>${h}</th>`).join('')+'</tr>';
+
+  if(!sorted.length){
+    document.getElementById('lb-body').innerHTML='<tr class="empty-row"><td colspan="6">No data for this store in March 2026</td></tr>';
+    return;
+  }
+
+  const rankKey={overall:'overall',shifts:'shifts',travel:'travel',skills:'skills'};
+  document.getElementById('lb-body').innerHTML=sorted.map(d=>{
+    const ranks=getRank(d,store);
+    const r=ranks[rankKey[currentTab]];
+    const rowClass=r<=3?`rank-${r}`:'';
+    let cols='';
+    if(currentTab==='overall'){
+      cols=`<td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.shift_pts/maxPts*100)}%;background:var(--coral)"></div></div><span class="bar-val">${d.shift_pts}</span></div></td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.skill_pts/maxPts*100)}%;background:var(--purple)"></div></div><span class="bar-val">${d.skill_pts}</span></div></td>
+      <td class="pts-total">${d.total_pts}</td>`;
+    } else if(currentTab==='shifts'){
+      cols=`<td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.total_shifts/maxShifts*100)}%;background:var(--coral)"></div></div><span class="bar-val">${d.total_shifts}</span></div></td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.cross_loc_shifts/maxShifts*100)}%;background:var(--teal)"></div></div><span class="bar-val">${d.cross_loc_shifts}</span></div></td>
+      <td class="pts-total">${d.shift_pts}</td>`;
+    } else if(currentTab==='travel'){
+      cols=`<td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.cross_loc_shifts/maxCross*100)}%;background:var(--teal)"></div></div><span class="bar-val">${d.cross_loc_shifts}</span></div></td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.total_shifts/maxShifts*100)}%;background:var(--coral)"></div></div><span class="bar-val">${d.total_shifts}</span></div></td>
+      <td class="pts-total">${d.cross_loc_shifts*8}</td>`;
+    } else {
+      cols=`<td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.skill_activations/maxSkills*100)}%;background:var(--purple)"></div></div><span class="bar-val">${d.skill_activations}</span></div></td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(d.skill_pts/45*100)}%;background:var(--purple)"></div></div><span class="bar-val">${d.skill_pts}</span></div></td>
+      <td class="pts-total">${d.total_pts}</td>`;
+    }
+    return `<tr class="${rowClass}">
+      <td><span class="rank-badge">${r}</span></td>
+      <td><div class="emp-name">${d.employee}</div><div class="store-tag">${d.store_short}</div></td>
+      <td><div class="store-tag" style="font-size:12px;color:var(--ink2)">${d.store}</div></td>
+      ${cols}
+    </tr>`;
+  }).join('');
+}
+render();
+</script>
+</body>
+</html>
