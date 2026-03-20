@@ -271,7 +271,7 @@ function renderEmp() {
     overall: ['#','User ID','Store','Division','Shift pts','Skill pts','Total'],
     shifts:  ['#','User ID','Store','Division','Shifts','Cross-loc','Shift pts'],
     travel:  ['#','User ID','Store','Division','Cross-loc shifts','Total shifts','Bonus pts'],
-    skills:  ['#','User ID','Store','Division','Skills activated','Skill pts','Total']
+    skills:  ['#','User ID','Store','Division','Skills activated','Skill pts','Skill pts total']
   };
   var sortFns = {
     overall: function(a,b){return b.total_pts-a.total_pts;},
@@ -305,7 +305,7 @@ function renderEmp() {
     } else {
       cols = '<td>' + bar(Math.round(d.skill_activations/maxSk*100),'var(--purple)') + '<span class="bv">'+d.skill_activations+'</span></div></td>'
            + '<td>' + bar(Math.round(d.skill_pts/45*100),'var(--purple)') + '<span class="bv">'+d.skill_pts+'</span></div></td>'
-           + '<td class="pts">'+d.total_pts+'</td>';
+           + '<td class="pts">'+d.skill_pts+'</td>';
     }
     return '<tr class="rank-'+r+'">'
       + '<td><span class="rbadge">'+r+'</span></td>'
