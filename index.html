@@ -111,14 +111,14 @@ footer strong{color:rgba(255,255,255,.65)}
 </div>
 
 <nav>
-  <a class="nav-link active" onclick="showSection('employees',this)">Employee tier</a>
-  <a class="nav-link" onclick="showSection('managers',this)">Posting manager tier</a>
+  <a class="nav-link active" onclick="showSection('employees',this)">Employee leaderboard</a>
+  <a class="nav-link" onclick="showSection('managers',this)">Posting manager leaderboard</a>
 </nav>
 
 <div id="sec-employees">
   <div class="section">
     <div class="container">
-      <div class="sec-eye">Employee tier · point model</div>
+      <div class="sec-eye">Employee leaderboard · point model</div>
       <h2 class="sec-title">How employees earn points</h2>
       <p class="sec-body">Three behaviors drive the score. Home store is confirmed from the employee master — cross-location bonus applies only when working outside it.</p>
       <div class="scoring-grid">
@@ -157,7 +157,7 @@ footer strong{color:rgba(255,255,255,.65)}
 <div id="sec-managers" style="display:none">
   <div class="section">
     <div class="container">
-      <div class="sec-eye">Posting manager tier · point model</div>
+      <div class="sec-eye">Posting manager leaderboard · point model</div>
       <h2 class="sec-title">How posting managers earn points</h2>
       <p class="sec-body">Five behaviors weighted by priority. Workforce engagement uses active employees only from the employee master file.</p>
       <div class="note">
@@ -284,18 +284,11 @@ function renderEmp() {
   var maxS  = Math.max.apply(null, data.map(function(d){return d.total_shifts;})) || 1;
   var maxC  = Math.max.apply(null, data.map(function(d){return d.cross_loc_shifts;})) || 1;
   var maxSk = Math.max.apply(null, data.map(function(d){return d.skill_activations;})) || 1;
-  var rkMap = {
-    overall: filtered ? '_or'  : 'overall_rank',
-    shifts:  filtered ? '_sr'  : 'shift_rank',
-    travel:  filtered ? '_tr'  : 'travel_rank',
-    skills:  filtered ? '_skr' : 'skills_rank'
-  };
-
   document.getElementById('emp-head').innerHTML = '<tr>' + heads[empTab].map(function(h){return '<th>'+h+'</th>';}).join('') + '</tr>';
   if (!sorted.length) { document.getElementById('emp-body').innerHTML = '<tr class="empty-r"><td colspan="7">No data for this filter</td></tr>'; return; }
 
-  document.getElementById('emp-body').innerHTML = sorted.map(function(d) {
-    var r = d[rkMap[empTab]] || 1;
+  document.getElementById('emp-body').innerHTML = sorted.map(function(d, i) {
+    var r = i + 1;
     var cols = '';
     if (empTab === 'overall') {
       cols = '<td>' + bar(Math.round(d.shift_pts/maxP*100),'var(--coral)') + '<span class="bv">'+d.shift_pts+'</span></div></td>'
@@ -372,19 +365,11 @@ function renderMgr() {
   var maxE  = Math.max.apply(null, data.map(function(d){return d.unique_employees;})) || 1;
   var maxS  = Math.max.apply(null, data.map(function(d){return d.shifts_filled;})) || 1;
   var maxSk = Math.max.apply(null, data.map(function(d){return d.skills_approved;})) || 1;
-  var rkMap = {
-    overall:    filtered ? '_or'  : 'overall_rank',
-    adoption:   filtered ? '_ar'  : 'emp_rank',
-    engagement: filtered ? '_er'  : 'eng_rank',
-    shifts:     filtered ? '_sr'  : 'shift_rank',
-    skills:     filtered ? '_skr' : 'skill_rank'
-  };
-
   document.getElementById('mgr-head').innerHTML = '<tr>' + heads[mgrTab].map(function(h){return '<th>'+h+'</th>';}).join('') + '</tr>';
   if (!sorted.length) { document.getElementById('mgr-body').innerHTML = '<tr class="empty-r"><td colspan="7">No data for this filter</td></tr>'; return; }
 
-  document.getElementById('mgr-body').innerHTML = sorted.map(function(d) {
-    var r = d[rkMap[mgrTab]] || 1;
+  document.getElementById('mgr-body').innerHTML = sorted.map(function(d, i) {
+    var r = i + 1;
     var cols = '';
     if (mgrTab === 'overall') {
       cols = '<td>' + bar(Math.round(d.emp_pts/maxP*100),'var(--coral)') + '<span class="bv">'+d.emp_pts+'</span></div></td>'
